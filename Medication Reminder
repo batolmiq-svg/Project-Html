@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medication Reminder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Medication Reminder</h1>
+    <p>Keep track of your medicines, dosages, and reminder times.</p>
+</header>
+
+<main>
+
+    <h2>My Daily Medications</h2>
+    <p>Manage your medicines and daily reminders.</p>
+
+    <button type="button" id="enableReminders">
+        Enable Reminders
+    </button>
+
+    <button type="button" id="showForm">
+        + Add New Medication
+    </button>
+
+    <!-- Medication Form -->
+   <form id="medicationForm" action="#" method="post" hidden>
+
+        <h3 id="formTitle">Add a Medication</h3>
+
+        <label for="medName">Medication Name</label>
+        <input type="text" id="medName" required>
+
+        <label for="medImage">Medication Picture</label>
+        <input type="file" id="medImage" accept="image/*">
+
+        <img id="imagePreview" alt="Medication preview" hidden width="120">
+
+        <label for="dosage">Dosage</label>
+        <input type="text" id="dosage"
+               placeholder="Example: 1 tablet" required>
+    
+
+        <label for="frequency">How often?</label>
+        <select id="frequency" required>
+            <option value="">Choose frequency</option>
+            <option>Once daily</option>
+            <option>Twice daily</option>
+            <option>Three times daily</option>
+        </select>
+
+        <!-- Reminder Times Appear Here -->
+        <div id="reminderTimesContainer"></div>
+
+        <label for="notes">Instructions</label>
+        <textarea id="notes"
+                  placeholder="Extra instructions (optional)"></textarea>
+
+        <button type="submit">Save Medication</button>
+        <button type="button" id="cancelForm">Cancel</button>
+
+    </form>
+
+    <!-- Medication List -->
+    <section id="medicationList">
+        <h2>My Medication List</h2>
+    </section>
+
+</main>
+
+<script>
+
+// 1. Get HTML Elements
+
+const showForm = document.getElementById("showForm");
+const form = document.getElementById("medicationForm");
+const cancelForm = document.getElementById("cancelForm");
+const medicationList = document.getElementById("medicationList");
+
+const medImage = document.getElementById("medImage");
+const imagePreview = document.getElementById("imagePreview");
+const formTitle = document.getElementById("formTitle");
+
+const frequencyInput = document.getElementById("frequency");
+const reminderTimesContainer =
+    document.getElementById("reminderTimesContainer");
+
+const STORAGE_KEY = "grandmaMedications";
+
+let medications = [];
+let imageData = "";
+let editIndex = -1;
+let selectedMedications = new Set();
+let manageMode = false;
+
+
+// 2. Load Saved Medications
+
+try {
+
+    medications = JSON.parse(
+        localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    if (!Array.isArray(medications)) {
+        medications = [];
+    }
+
+} catch (error) {
+
+    medications = [];
+    alert("Saved medication data could not be loaded.");
+
+}
+
+
+// 3. Save Medications
+
+function saveMedications() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(medications)
+        );
+
+        return true;
+
+    } catch (error) {
+
+        alert("Storage is full. Try using smaller medication pictures.");
+
+        return false;
+
+    }
+
+}
+
+
+// 4. Get Number of Reminders
+
+function getReminderCount(frequency) {
+
+    if (frequency === "Once daily") return 1;
+
+    if (frequency === "Twice daily") return 2;
+
+    if (frequency === "Three times daily") return 3;
+
+    return 0;
+
+}
+
+
+// 5. Create Reminder Time Fields
+
+function updateReminderFields(savedTimes = []) {
+
+    const oldTimes = [];
+
+    reminderTimesContainer
+        .querySelectorAll("input[type='time']")
+        .forEach(function (input) {
+            oldTimes.push(input.value);
+        });
+
+    const timesToUse = savedTimes.length > 0
+        ? savedTimes
+        : oldTimes;
+
+    const count = getReminderCount(frequencyInput.value);
+
+    reminderTimesContainer.innerHTML = "";
+
+    for (let i = 0; i < count; i++) {
+
+        const label = document.createElement("label");
+
+        label.textContent = "Reminder " + (i + 1);
+
+        const input = document.createElement("input");
+
+        input.type = "time";
+        input.id = "reminderTime" + (i + 1);
+        input.lang = "en";
+        input.dir = "ltr";
+        input.required = true;
+
+        input.value = timesToUse[i] || "";
+
+        reminderTimesContainer.appendChild(label);
+        reminderTimesContainer.appendChild(input);
+    }
+
+}
+
+
+// Update reminder fields when frequency changes
+
+frequencyInput.addEventListener("change", function () {
+
+    updateReminderFields();
+
+});
+
+
+// Get All Reminder Times
+
+function getReminderTimes() {
+
+    const times = [];
+
+    reminderTimesContainer
+        .querySelectorAll("input[type='time']")
+        .forEach(function (input) {
+
+            times.push(input.value);
+
+        });
+
+    return times;
+
+}
+
+
+// 6. Open Add Medication Form
+
+showForm.addEventListener("click", function () {
+
+    editIndex = -1;
+
+    form.reset();
+
+    imageData = "";
+
+    imagePreview.src = "";
+    imagePreview.hidden = true;
+
+    reminderTimesContainer.innerHTML = "";
+
+    formTitle.textContent = "Add a Medication";
+
+    form.hidden = false;
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+});
+
+
+// 7. Cancel Form
+
+cancelForm.addEventListener("click", function () {
+
+    form.reset();
+
+    form.hidden = true;
+
+    imageData = "";
+
+    imagePreview.src = "";
+    imagePreview.hidden = true;
+
+    reminderTimesContainer.innerHTML = "";
+
+    editIndex = -1;
+
+});
+
+
+// 8. Enable Notifications
+
+document.getElementById("enableReminders")
+.addEventListener("click", async function () {
+
+    if (!("Notification" in window)) {
+
+        alert("Notifications are not supported by this browser.");
+
+        return;
+
+    }
+
+    try {
+
+        const permission = await Notification.requestPermission();
+
+        if (permission === "granted") {
+
+            alert("Reminders enabled successfully!");
+
+        } else {
+
+            alert("Notifications were not enabled.");
+
+        }
+
+    } catch (error) {
+
+        alert("Could not enable notifications.");
+
+    }
+
+});
+
+
+// 9. Preview Medication Picture
+
+medImage.addEventListener("change", function () {
+
+    const file = medImage.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+
+        alert("Please choose an image file.");
+
+        medImage.value = "";
+
+        return;
+
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function () {
+
+        imageData = reader.result;
+
+        imagePreview.src = imageData;
+
+        imagePreview.hidden = false;
+
+    };
+
+    reader.readAsDataURL(file);
+
+});
+
+
+// 10. Save or Update Medication
+
+form.addEventListener("submit", function (event) {
+
+    event.preventDefault();
+
+    const reminderTimes = getReminderTimes();
+
+    if (reminderTimes.some(time => !time)) {
+
+        alert("Please enter all reminder times.");
+
+        return;
+
+    }
+
+    const oldMedications = [...medications];
+
+    const medication = {
+
+        name: document.getElementById("medName").value.trim(),
+
+        dosage: document.getElementById("dosage").value.trim(),
+
+        
+
+        frequency: frequencyInput.value,
+
+        reminders: reminderTimes,
+
+        // Keep the first reminder for compatibility with old saved data
+        reminder: reminderTimes[0] || "",
+
+        notes: document.getElementById("notes").value.trim(),
+
+        image: imageData,
+
+        lastReminders: editIndex >= 0
+            ? medications[editIndex].lastReminders || {}
+            : {}
+
+    };
+
+    if (editIndex >= 0) {
+
+        medications[editIndex] = medication;
+
+    } else {
+
+        medications.push(medication);
+
+    }
+
+    if (!saveMedications()) {
+
+        medications = oldMedications;
+
+        return;
+
+    }
+
+    selectedMedications.clear();
+
+    manageMode = false;
+
+    renderMedications();
+
+    form.reset();
+
+    form.hidden = true;
+
+    imageData = "";
+
+    imagePreview.src = "";
+    imagePreview.hidden = true;
+
+    reminderTimesContainer.innerHTML = "";
+
+    editIndex = -1;
+
+});
+
+
+// 11. Format Time
+
+function formatReminderTime(time) {
+
+    if (!time) return "Not specified";
+
+    let [hours, minutes] = time.split(":");
+
+    hours = Number(hours);
+
+    const period = hours >= 12 ? "PM" : "AM";
+
+    const displayHour = hours % 12 || 12;
+
+    return String(displayHour).padStart(2, "0")
+        + ":" + minutes + " " + period;
+
+}
+
+
+// 12. Get Reminder Times From Medication
+
+function getMedicationReminders(medication) {
+
+    // New saved medications
+    if (Array.isArray(medication.reminders)) {
+        return medication.reminders;
+    }
+
+    // Support medications saved with the old format
+    return medication.reminder
+        ? [medication.reminder]
+        : [];
+
+}
+
+
+// 13. Display Medication Cards
+
+function renderMedications() {
+
+    medicationList.innerHTML = "";
+
+    const heading = document.createElement("h2");
+
+    heading.textContent = "My Medication List";
+
+    medicationList.appendChild(heading);
+
+
+    // Empty List Message
+
+    if (medications.length === 0) {
+
+        manageMode = false;
+
+        const emptyMessage = document.createElement("p");
+
+        emptyMessage.textContent =
+            "No medications added yet. Click Add New Medication to get started.";
+
+        medicationList.appendChild(emptyMessage);
+
+        return;
+
+    }
+
+
+    // Manage Medications Button
+
+    const manageButton = document.createElement("button");
+
+    manageButton.type = "button";
+
+    manageButton.className = "manage-button";
+
+    manageButton.textContent = manageMode
+        ? "Done"
+        : "Manage Medications";
+
+    manageButton.addEventListener("click", function () {
+
+        manageMode = !manageMode;
+
+        selectedMedications.clear();
+
+        renderMedications();
+
+    });
+
+    medicationList.appendChild(manageButton);
+
+
+    // Selection Controls
+
+    if (manageMode) {
+
+        const controls = document.createElement("div");
+
+        controls.className = "selection-controls";
+
+
+        // Select All
+
+        const selectAllLabel = document.createElement("label");
+
+        const selectAll = document.createElement("input");
+
+        selectAll.type = "checkbox";
+
+        selectAll.checked =
+            selectedMedications.size === medications.length;
+
+        selectAll.addEventListener("change", function () {
+
+            if (selectAll.checked) {
+
+                selectedMedications = new Set(
+                    medications.map((_, index) => index)
+                );
+
+            } else {
+
+                selectedMedications.clear();
+
+            }
+
+            renderMedications();
+
+        });
+
+        selectAllLabel.append(selectAll, " Select All");
+
+
+        // Delete Selected
+
+        const deleteSelected = document.createElement("button");
+
+        deleteSelected.type = "button";
+
+        deleteSelected.textContent =
+            "Delete Selected (" + selectedMedications.size + ")";
+
+        deleteSelected.disabled =
+            selectedMedications.size === 0;
+
+        deleteSelected.addEventListener("click", function () {
+
+            if (selectedMedications.size === 0) return;
+
+            const confirmed = confirm(
+                "Are you sure you want to delete the selected medications?"
+            );
+
+            if (!confirmed) return;
+
+            const oldMedications = [...medications];
+
+            medications = medications.filter(
+                (_, index) => !selectedMedications.has(index)
+            );
+
+            if (!saveMedications()) {
+
+                medications = oldMedications;
+
+                return;
+
+            }
+
+            selectedMedications.clear();
+
+            if (medications.length === 0) {
+                manageMode = false;
+            }
+
+            renderMedications();
+
+        });
+
+        controls.append(selectAllLabel, deleteSelected);
+
+        medicationList.appendChild(controls);
+
+    }
+
+
+    // Create Medication Cards
+
+    medications.forEach(function (medication, index) {
+
+        const card = document.createElement("article");
+
+        card.className = "medication-card";
+
+
+        // Individual Selection
+
+        if (manageMode) {
+
+            const selectLabel = document.createElement("label");
+
+            const checkbox = document.createElement("input");
+
+            checkbox.type = "checkbox";
+
+            checkbox.checked = selectedMedications.has(index);
+
+            checkbox.addEventListener("change", function () {
+
+                if (checkbox.checked) {
+
+                    selectedMedications.add(index);
+
+                } else {
+
+                    selectedMedications.delete(index);
+
+                }
+
+                renderMedications();
+
+            });
+
+            selectLabel.append(checkbox, " Select");
+
+            card.appendChild(selectLabel);
+
+        }
+
+
+        // Medication Picture
+
+        if (medication.image) {
+
+            const picture = document.createElement("img");
+
+            picture.src = medication.image;
+
+            picture.alt = "Medication picture";
+
+            picture.className = "medication-picture";
+
+            card.appendChild(picture);
+
+        }
+
+
+        // Medication Name
+
+        const name = document.createElement("h3");
+
+        name.textContent = medication.name;
+
+        card.appendChild(name);
+
+
+        // Medication Details
+
+        const details = document.createElement("div");
+
+        details.className = "medication-details";
+
+        function addDetail(icon, label, value) {
+
+            const item = document.createElement("div");
+
+            item.className = "medication-detail";
+
+            const symbol = document.createElement("span");
+
+            symbol.textContent = icon;
+
+            const title = document.createElement("strong");
+
+            title.textContent = label;
+
+            const text = document.createElement("span");
+
+            text.textContent = value || "Not specified";
+
+            item.append(symbol, title, text);
+
+            details.appendChild(item);
+
+        }
+
+        addDetail("💊", "Dosage", medication.dosage);
+
+
+
+
+        // Show All Reminder Times
+
+        const reminderText = getMedicationReminders(medication)
+            .map(formatReminderTime)
+            .join(" / ");
+
+        addDetail(
+            "⏰",
+            "Reminders",
+            reminderText || "Not specified"
+        );
+
+        addDetail("📅", "Frequency", medication.frequency);
+
+        addDetail(
+            "📝",
+            "Instructions",
+            medication.notes || "None"
+        );
+
+        card.appendChild(details);
+
+
+        // Edit and Delete Buttons
+
+        if (manageMode) {
+
+            const actions = document.createElement("div");
+
+            actions.className = "medication-actions";
+
+
+            const editButton = document.createElement("button");
+
+            editButton.type = "button";
+
+            editButton.textContent = "Edit";
+
+            editButton.addEventListener("click", function () {
+
+                editMedication(index);
+
+            });
+
+
+            const deleteButton = document.createElement("button");
+
+            deleteButton.type = "button";
+
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", function () {
+
+                deleteMedication(index);
+
+            });
+
+            actions.append(editButton, deleteButton);
+
+            card.appendChild(actions);
+
+        }
+
+        medicationList.appendChild(card);
+
+    });
+
+}
+
+
+// 14. Edit Medication
+
+function editMedication(index) {
+
+    const medication = medications[index];
+
+    if (!medication) {
+
+        alert("Medication not found.");
+
+        return;
+
+    }
+
+    editIndex = index;
+
+    document.getElementById("medName").value = medication.name;
+
+    document.getElementById("dosage").value = medication.dosage;
+
+   
+    frequencyInput.value = medication.frequency;
+
+    document.getElementById("notes").value =
+        medication.notes || "";
+
+    // Load saved reminder times
+    updateReminderFields(getMedicationReminders(medication));
+
+    imageData = medication.image || "";
+
+    if (imageData) {
+
+        imagePreview.src = imageData;
+
+        imagePreview.hidden = false;
+
+    } else {
+
+        imagePreview.src = "";
+
+        imagePreview.hidden = true;
+
+    }
+
+    formTitle.textContent = "Edit Medication";
+
+    form.hidden = false;
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+
+
+// 15. Delete One Medication
+
+function deleteMedication(index) {
+
+    const confirmed = confirm(
+        "Are you sure you want to delete this medication?"
+    );
+
+    if (!confirmed) return;
+
+    const oldMedications = [...medications];
+
+    medications.splice(index, 1);
+
+    if (!saveMedications()) {
+
+        medications = oldMedications;
+
+        return;
+
+    }
+
+    selectedMedications.clear();
+
+    if (medications.length === 0) {
+        manageMode = false;
+    }
+
+    renderMedications();
+
+}
+
+
+// 16. Check Medication Reminders
+
+function checkReminders() {
+
+    const now = new Date();
+
+    const currentTime =
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0");
+
+    const today = now.toDateString();
+
+    let changed = false;
+
+    medications.forEach(function (medication, index) {
+
+        const reminderTimes = getMedicationReminders(medication);
+
+        if (!medication.lastReminders) {
+            medication.lastReminders = {};
+        }
+
+        reminderTimes.forEach(function (reminderTime, reminderIndex) {
+
+            const reminderKey = today + "_" + reminderTime;
+
+            if (
+                reminderTime === currentTime &&
+                medication.lastReminders[reminderIndex] !== reminderKey
+            ) {
+
+                const message =
+                    "Reminder: " + medication.name +
+                    " - " + medication.dosage;
+
+                if (
+                    "Notification" in window &&
+                    Notification.permission === "granted"
+                ) {
+
+                    new Notification("Medication Reminder", {
+                        body: message
+                    });
+
+                } else {
+
+                    alert(message);
+
+                }
+
+                medication.lastReminders[reminderIndex] = reminderKey;
+
+                changed = true;
+
+            }
+
+        });
+
+    });
+
+    if (changed) {
+        saveMedications();
+    }
+
+}
+
+
+// 17. Display Saved Medications
+
+renderMedications();
+
+
+// Check Reminders Every 15 Seconds
+
+setInterval(checkReminders, 15000);
+
+</script>
+
+</body>
+</html>
