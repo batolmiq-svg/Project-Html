@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Share a Memory - حارس كبار السن</title>
+  <!-- ربط ملف التنسيق الخارجي الموجود في المستودع -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- شريط التنقل (عدّلي أسماء الروابط حسب ملفات زميلاتك في المستودع) -->
+  <nav>
+    <ul>
+      <li><a href="index.html">الرئيسية</a></li>
+      <li><a href="medication.html">منظم الأدوية</a></li>
+      <li><a href="memory-tree.html">شجرة الذكريات</a></li>
+      <li><a href="share-memory.html">إضافة ذكرى</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <h1>إضافة ذكرى للأجداد (Share a Memory)</h1>
+    <p>شاركوا قصة أو حكمة أو ذكرى جميلة للأجداد لحفظها ضمن الموقع.</p>
+
+    <form id="memoryForm">
+      <!-- حقل الاسم مع Label -->
+      <div>
+        <label for="senderName">الاسم:</label>
+        <input type="text" id="senderName" name="senderName" placeholder="اكتبي اسمك">
+      </div>
+
+      <!-- حقل البريد الإلكتروني -->
+      <div>
+        <label for="senderEmail">البريد الإلكتروني:</label>
+        <input type="email" id="senderEmail" name="senderEmail" placeholder="example@email.com">
+      </div>
+
+      <!-- قائمة منسدلة (Drop-down List) -->
+      <div>
+        <label for="memoryType">نوع الذكرى:</label>
+        <select id="memoryType" name="memoryType">
+          <option value="">-- اختاري نوع الذكرى --</option>
+          <option value="story">قصة قديمة</option>
+          <option value="advice">نصيحة أو حكمة</option>
+          <option value="tradition">عادة أو مناسبة</option>
+        </select>
+      </div>
+
+      <!-- خيارات (Radio Buttons) -->
+      <fieldset>
+        <legend>صلة القرابة بالجد أو الجدة:</legend>
+        <label>
+          <input type="radio" name="relation" value="grandson"> حفيد
+        </label>
+        <label>
+          <input type="radio" name="relation" value="granddaughter"> حفيدة
+        </label>
+        <label>
+          <input type="radio" name="relation" value="family"> فرد من العائلة
+        </label>
+      </fieldset>
+
+      <!-- خيارات إضافية (Checkboxes) -->
+      <fieldset>
+        <legend>خيارات المشاركة:</legend>
+        <label>
+          <input type="checkbox" id="publishConsent" name="publishConsent">
+          أوافق على عرض الذكرى في شجرة الذكريات
+        </label>
+      </fieldset>
+
+      <!-- نص الذكرى -->
+      <div>
+        <label for="memoryText">نص الذكرى:</label>
+        <textarea id="memoryText" name="memoryText" rows="4" placeholder="اكتبي الذكرى هنا..."></textarea>
+      </div>
+
+      <!-- خاصية Geolocation -->
+      <div>
+        <button type="button" id="getLocationBtn">تحديد الموقع الجغرافي (Geolocation)</button>
+        <input type="text" id="locationOutput" name="locationOutput" placeholder="ستظهر الإحداثيات هنا" readonly>
+      </div>
+
+      <br>
+
+      <!-- زر الإرسال -->
+      <button type="submit" id="submitBtn">إرسال الذكرى</button>
+    </form>
+
+    <!-- منطقة عرض رسائل التحقق أو التأكيد -->
+    <div id="formMessage"></div>
+  </main>
+
+  <script>
+    // 1. برمجة خاصية Geolocation
+    const getLocationBtn = document.getElementById("getLocationBtn");
+    const locationOutput = document.getElementById("locationOutput");
+    const formMessage = document.getElementById("formMessage");
+
+    getLocationBtn.addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        locationOutput.value = "المتصفح لا يدعم خاصية تحديد الموقع.";
+        return;
+      }
+
+      locationOutput.value = "جاري تحديد الموقع...";
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const lat = position.coords.latitude.toFixed(5);
+          const lng = position.coords.longitude.toFixed(5);
+          locationOutput.value = `خط العرض: ${lat} ، خط الطول: ${lng}`;
+        },
+        function (error) {
+          locationOutput.value = "تعذر الحصول على الموقع (تأكدي من السماح بالوصول للموقع).";
+        }
+      );
+    });
+
+    // 2. برمجة زر الإرسال والتحقق من البيانات
+    const memoryForm = document.getElementById("memoryForm");
+
+    memoryForm.addEventListener("submit", function (event) {
+      event.preventDefault(); // منع إعادة تحميل الصفحة قبل التحقق
+
+      const name = document.getElementById("senderName").value.trim();
+      const email = document.getElementById("senderEmail").value.trim();
+      const memoryType = document.getElementById("memoryType").value;
+      const relation = document.querySelector('input[name="relation"]:checked');
+      const memoryText = document.getElementById("memoryText").value.trim();
+
+      if (name === "") {
+        formMessage.textContent = "يرجى إدخال الاسم.";
+        return;
+      }
+
+      if (email === "" || !email.includes("@")) {
+        formMessage.textContent = "يرجى إدخال بريد إلكتروني صحيح.";
+        return;
+      }
+
+      if (memoryType === "") {
+        formMessage.textContent = "يرجى اختيار نوع الذكرى من القائمة.";
+        return;
+      }
+
+      if (!relation) {
+        formMessage.textContent = "يرجى اختيار صلة القرابة.";
+        return;
+      }
+
+      if (memoryText === "") {
+        formMessage.textContent = "يرجى كتابة نص الذكرى قبل الإرسال.";
+        return;
+      }
+
+      formMessage.textContent = `تم التحقق بنجاح! شكرًا لكِ يا ${name}، تم تجهيز الذكرى من نوع (${memoryType}).`;
+      memoryForm.reset();
+    });
+  </script>
+
+</body>
+</html>
