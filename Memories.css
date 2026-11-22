@@ -1,0 +1,117 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    direction: ltr;
+    background-image: url("Photo's, Video's, Audio's/Background Logo.jpe");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #59465c;
+}
+header {
+    text-align: center;
+    padding: 35px 15px 20px;
+}
+
+header h1 {
+    color: #765477;
+    font-size: 34px;
+    font-weight: 800;
+    margin: 10px 0 18px;
+}
+header p {
+    color: #766b78;
+    font-size: 17px;
+    margin: 0;
+}
+main {
+    max-width: 1100px;
+    margin: 20px auto 50px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(80, 50, 80, 0.10);
+    backdrop-filter: blur(5px);
+}
+button {
+    background: #765477;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    padding: 12px 22px;
+    margin: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    background: #5d405f;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+label {
+    color: #59465c;
+    font-weight: 600;
+    font-size: 16px;
+}
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border: 1px solid #ddcddd;
+    border-radius: 9px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 16px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #956b91;
+    box-shadow: 0 0 0 3px rgba(118, 84, 119, 0.12);
+}
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.radio-item input[type="radio"] {
+  width: auto !important;
+  margin: 0;
+}
+.Checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.Checkbox-item [type="checkbox"] {
+  width: auto !important;
+  margin: 0;
+}
+a { color:#b9af75; text-decoration:none ; transform: translateY(-50%)}
+nav{  font-size: 25px; position: absolute;color:#c4a66e;}
+.logo{    padding: 50px;
+    text-align: center;
+    align-content: center;
+    position:relative}
