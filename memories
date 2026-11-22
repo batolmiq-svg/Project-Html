@@ -3,92 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Share a Memory - حارس كبار السن</title>
-  <!-- ربط ملف التنسيق الخارجي الموجود في المستودع -->
-  <link rel="stylesheet" href="style.css">
+  <title>Share a Memory - MediMemories</title>
+
+  <link href="Memories.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-
-  <!-- شريط التنقل (عدّلي أسماء الروابط حسب ملفات زميلاتك في المستودع) -->
+    <div class='logo'>
   <nav>
-    <ul>
-      <li><a href="index.html">الرئيسية</a></li>
-      <li><a href="medication.html">منظم الأدوية</a></li>
-      <li><a href="memory-tree.html">شجرة الذكريات</a></li>
-      <li><a href="share-memory.html">إضافة ذكرى</a></li>
-    </ul>
+      <a href="HomePage.html">Back</a>
   </nav>
-
+    </div>
   <main>
-    <h1>إضافة ذكرى للأجداد (Share a Memory)</h1>
-    <p>شاركوا قصة أو حكمة أو ذكرى جميلة للأجداد لحفظها ضمن الموقع.</p>
+    <h1>Adding a memory for the grandparents (Share a Memory)</h1>
+    <p>Share a story, piece of wisdom, or beautiful memory of your grandparents to be preserved on the site.</p>
 
     <form id="memoryForm">
-      <!-- حقل الاسم مع Label -->
       <div>
-        <label for="senderName">الاسم:</label>
-        <input type="text" id="senderName" name="senderName" placeholder="اكتبي اسمك">
+        <label for="senderName">the name:</label>
+        
+        <input type="text" id="senderName" name="senderName" placeholder="Write your name" >
       </div>
-
-      <!-- حقل البريد الإلكتروني -->
       <div>
-        <label for="senderEmail">البريد الإلكتروني:</label>
-        <input type="email" id="senderEmail" name="senderEmail" placeholder="example@email.com">
+        <label for="senderEmail">e-mail:</label>
+        
+        <input type="email" id="senderEmail" name="senderEmail" placeholder="example@email.com" >
       </div>
-
-      <!-- قائمة منسدلة (Drop-down List) -->
       <div>
-        <label for="memoryType">نوع الذكرى:</label>
+        <label for="memoryType">Memory Type:</label>
+        
         <select id="memoryType" name="memoryType">
-          <option value="">-- اختاري نوع الذكرى --</option>
-          <option value="story">قصة قديمة</option>
-          <option value="advice">نصيحة أو حكمة</option>
-          <option value="tradition">عادة أو مناسبة</option>
+            
+          <option value="">-- Choose The Type Of Memory --</option>
+          
+          <option value="story"> An Old Story</option>
+          
+          <option value="advice">A Piece Of Advice Or Wisdom</option>
+          
+          <option value="tradition">A Habit Or Occasion </option>
         </select>
       </div>
-
-      <!-- خيارات (Radio Buttons) -->
       <fieldset>
-        <legend>صلة القرابة بالجد أو الجدة:</legend>
-        <label>
-          <input type="radio" name="relation" value="grandson"> حفيد
-        </label>
-        <label>
-          <input type="radio" name="relation" value="granddaughter"> حفيدة
-        </label>
-        <label>
-          <input type="radio" name="relation" value="family"> فرد من العائلة
-        </label>
+      <legend>Relationship to the grandfather or grandmother:</legend>
+      
+      <label class="radio-item">
+          
+      <input type="radio" name="relation" value="Grandson"> Grandson
+      
+      </label>
+      
+      <label class="radio-item">
+          
+      <input type="radio" name="relation" value="Granddaughter"> Granddaughter
+      
+      </label>
+      
+      <label class="radio-item">
+          
+     <input type="radio" name="relation" value="A Family Member"> A Family Member
+      </label>
+      
       </fieldset>
-
-      <!-- خيارات إضافية (Checkboxes) -->
       <fieldset>
-        <legend>خيارات المشاركة:</legend>
-        <label>
+        <legend>Sharing options:</legend>
+        <label class='Checkbox-item'>
           <input type="checkbox" id="publishConsent" name="publishConsent">
-          أوافق على عرض الذكرى في شجرة الذكريات
+          I agree to display the memory in the Memory Tree
         </label>
       </fieldset>
-
-      <!-- نص الذكرى -->
       <div>
-        <label for="memoryText">نص الذكرى:</label>
-        <textarea id="memoryText" name="memoryText" rows="4" placeholder="اكتبي الذكرى هنا..."></textarea>
+        <label for="memoryText">What's the memory?</label>
+        <textarea id="memoryText" name="memoryText" rows="4" placeholder="Write the memory here..."></textarea>
       </div>
-
-      <!-- خاصية Geolocation -->
       <div>
-        <button type="button" id="getLocationBtn">تحديد الموقع الجغرافي (Geolocation)</button>
-        <input type="text" id="locationOutput" name="locationOutput" placeholder="ستظهر الإحداثيات هنا" readonly>
+        <button type="button" id="getLocationBtn">Determining the geographical location:</button>
+        <input type="text" id="locationOutput" name="locationOutput" placeholder="The coordinates will appear here" readonly>
       </div>
 
       <br>
-
-      <!-- زر الإرسال -->
-      <button type="submit" id="submitBtn">إرسال الذكرى</button>
+      <button type="submit" id="submitBtn">Send The Memory</button>
     </form>
-
-    <!-- منطقة عرض رسائل التحقق أو التأكيد -->
     <div id="formMessage"></div>
   </main>
 
@@ -100,20 +93,20 @@
 
     getLocationBtn.addEventListener("click", function () {
       if (!navigator.geolocation) {
-        locationOutput.value = "المتصفح لا يدعم خاصية تحديد الموقع.";
+        locationOutput.value = "The browser does not support Geolocation services..";
         return;
       }
 
-      locationOutput.value = "جاري تحديد الموقع...";
+      locationOutput.value = "Location is being determined...";
 
       navigator.geolocation.getCurrentPosition(
         function (position) {
           const lat = position.coords.latitude.toFixed(5);
           const lng = position.coords.longitude.toFixed(5);
-          locationOutput.value = `خط العرض: ${lat} ، خط الطول: ${lng}`;
+          locationOutput.value = `latitude: ${lat} ، Longitude: ${lng}`;
         },
         function (error) {
-          locationOutput.value = "تعذر الحصول على الموقع (تأكدي من السماح بالوصول للموقع).";
+          locationOutput.value = "Location could not be accessed (make sure you have allowed access to Geolocate you).";
         }
       );
     });
@@ -131,31 +124,31 @@
       const memoryText = document.getElementById("memoryText").value.trim();
 
       if (name === "") {
-        formMessage.textContent = "يرجى إدخال الاسم.";
+        formMessage.textContent = "Please enter name.";
         return;
       }
 
       if (email === "" || !email.includes("@")) {
-        formMessage.textContent = "يرجى إدخال بريد إلكتروني صحيح.";
+        formMessage.textContent = "Please enter a valid email address.";
         return;
       }
 
       if (memoryType === "") {
-        formMessage.textContent = "يرجى اختيار نوع الذكرى من القائمة.";
+        formMessage.textContent = "Please select the type of Memory from the list..";
         return;
       }
 
       if (!relation) {
-        formMessage.textContent = "يرجى اختيار صلة القرابة.";
+        formMessage.textContent = "Please select the relationship.";
         return;
       }
 
       if (memoryText === "") {
-        formMessage.textContent = "يرجى كتابة نص الذكرى قبل الإرسال.";
+        formMessage.textContent = "Please write your commemorative message before sending.";
         return;
       }
 
-      formMessage.textContent = `تم التحقق بنجاح! شكرًا لكِ يا ${name}، تم تجهيز الذكرى من نوع (${memoryType}).`;
+      formMessage.textContent = `Verified successfully! Thank you.  ${name}، The Memory was prepared in the type (${memoryType}).`;
       memoryForm.reset();
     });
   </script>
