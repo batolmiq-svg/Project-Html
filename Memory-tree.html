@@ -11,15 +11,30 @@
     <header>
         <h1>🌳 Grandma’s Memory Tree</h1>
         <h2>Preserving Voices, Stories &amp; Wisdom</h2>
-        <p>Click on any glowing pink branch or blossom to listen to our grandparents' stories.</p>
+        <p>Click on any glowing pink blossom to listen, or add a new family memory branch below.</p>
     </header>
 
     <main>
+        <!-- NOTIFICATION BANNER -->
+        <div id="memoryNotification" class="memory-notification" role="alert" style="display: none;">
+            <div class="notification-content">
+                <span class="notification-icon">🔔</span>
+                <div>
+                    <strong id="notificationTitle">New Memory Added! / تم إدراج رسالة جديدة لك!</strong>
+                    <p id="notificationMessage">A new message was added to your tree — go check it out! / أدرجوا لك رسالة وذكرى جديدة على الشجرة، روح شوفها الآن!</p>
+                </div>
+            </div>
+            <div class="notification-actions">
+                <button type="button" id="goToMemoryBtn" class="notification-view-btn">Go Check It 👀 / شوفها</button>
+                <button type="button" id="closeNotificationBtn" class="notification-close-btn" aria-label="Close">✕</button>
+            </div>
+        </div>
+
         <section class="tree-section">
             <h2>Interactive Family Memory Tree</h2>
-            <p>Each branch holds a precious voice recording and timeless advice.</p>
+            <p>Each blossom holds a precious voice recording and timeless advice.</p>
 
-            <div class="tree-container">
+            <div class="tree-container" id="treeContainer">
                 <svg class="pink-tree" viewBox="0 0 800 620" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="trunkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -55,38 +70,19 @@
                     </g>
                 </svg>
 
-                <button type="button" class="memory-branch branch-1" onclick="playMemory(0)">
-                    <span class="blossom-icon">🌸</span>
-                    <span class="branch-title">Grandma Nora</span>
-                    <small>Childhood Eid Story</small>
-                </button>
-
-                <button type="button" class="memory-branch branch-2" onclick="playMemory(1)">
-                    <span class="blossom-icon">🌺</span>
-                    <span class="branch-title">Grandpa Saleh</span>
-                    <small>Wisdom on Patience</small>
-                </button>
-
-                <button type="button" class="memory-branch branch-3" onclick="playMemory(2)">
-                    <span class="blossom-icon">🌸</span>
-                    <span class="branch-title">Grandma Layla</span>
-                    <small>Herbal Tea &amp; Care</small>
-                </button>
-
-                <button type="button" class="memory-branch branch-4" onclick="playMemory(3)">
-                    <span class="blossom-icon">🌺</span>
-                    <span class="branch-title">Grandpa Omar</span>
-                    <small>Old Neighborhood Tales</small>
-                </button>
+                <!-- Dynamic branches will be rendered here -->
+                <div id="branchesWrapper"></div>
             </div>
         </section>
 
+        <!-- STORY & AUDIO PLAYER CARD -->
         <section class="story-player-card" id="storyPlayerCard">
             <div class="story-header">
-                <img id="grandparentImg" src="grandma1.jpg" alt="Grandparent Portrait" class="grandparent-photo">
+                <img id="grandparentImg" src="" alt="Grandparent Portrait" class="grandparent-photo" style="display: none;">
+                <div id="photoPlaceholder" class="photo-placeholder">🌸</div>
                 <div>
-                    <h3 id="memoryTitle">Select a Branch on the Tree</h3>
-                    <p id="memoryMeta" class="memory-meta">Click any pink blossom above to hear a voice memory.</p>
+                    <h3 id="memoryTitle">Select or Add a Branch on the Tree</h3>
+                    <p id="memoryMeta" class="memory-meta">Click any pink blossom above to view the story and play audio.</p>
                 </div>
             </div>
 
@@ -94,19 +90,51 @@
                 “Every wrinkle tells a story, and every voice is a treasure worth keeping.”
             </blockquote>
 
-            <audio id="memoryAudio" controls>
-                <source id="audioSource" src="story1.mp3" type="audio/mpeg">
+            <audio id="memoryAudio" controls style="display: none;">
                 Your browser does not support the audio element.
             </audio>
+            <p id="noAudioMsg" class="memory-meta">No audio file attached for this branch yet.</p>
         </section>
 
-        <section class="tips-section">
-            <h3>How to Use the Memory Tree</h3>
-            <ul class="memory-guide-list">
-                <li>Click on any pink flower branch on the tree to load a grandparent's story.</li>
-                <li>Listen to the recorded audio message using the built-in player.</li>
-                <li>Read the written wisdom quote saved alongside the recording.</li>
-            </ul>
+        <!-- ADD NEW BRANCH FORM FOR END USER -->
+        <section class="add-memory-section">
+            <h3>🌸 Add a New Memory Branch</h3>
+            <p>Upload a photo and either record a voice note or choose an audio file from your device.</p>
+
+            <form id="addMemoryForm" class="add-memory-form">
+                <div class="form-row">
+                    <label for="personName">Grandparent Name *</label>
+                    <input type="text" id="personName" placeholder="e.g., Grandma Fatima" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="storyTitle">Story Title *</label>
+                    <input type="text" id="storyTitle" placeholder="e.g., Childhood Eid Story" required>
+                </div>
+
+                <div class="form-row">
+                    <label for="storyQuote">Wisdom Quote *</label>
+                    <textarea id="storyQuote" rows="2" placeholder="Write a memorable quote or advice..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <label for="photoInput">Choose Photo (Optional)</label>
+                    <input type="file" id="photoInput" accept="image/*">
+                </div>
+
+                <div class="form-row">
+                    <label>Record Voice Directly or Upload Audio File (Optional)</label>
+                    <div class="voice-controls">
+                        <button type="button" id="recordBtn" class="record-btn">🎙️ Start Recording</button>
+                        <button type="button" id="stopBtn" class="stop-btn" disabled>⏹️ Stop</button>
+                        <span id="recordStatus" class="record-status">Ready to record</span>
+                    </div>
+                    <audio id="recordedPreview" controls style="display: none; margin-top: 8px;"></audio>
+                    <input type="file" id="audioInput" accept="audio/*">
+                </div>
+
+                <button type="submit" class="add-branch-btn">✨ Add Branch to Tree</button>
+            </form>
         </section>
     </main>
 
@@ -117,52 +145,280 @@
     <script>
         const memories = [
             {
+                name: "Grandma Nora",
+                shortTitle: "Childhood Eid Story",
                 title: "Grandma Nora — Childhood Eid Memories",
-                meta: "Recorded in 2025 • Duration: 0:45",
+                meta: "Sample Memory • Record or upload below",
                 quote: "“In the old days, the whole neighborhood gathered before sunrise, sharing warm dates and laughter.”",
-                image: "grandma1.jpg",
-                audio: "story1.mp3"
+                image: "",
+                audio: ""
             },
             {
+                name: "Grandpa Saleh",
+                shortTitle: "Wisdom on Patience",
                 title: "Grandpa Saleh — Wisdom on Patience & Kindness",
-                meta: "Recorded in 2025 • Duration: 1:10",
+                meta: "Sample Memory • Record or upload below",
                 quote: "“Take your time in life, my children; a gentle word heals faster than any medicine.”",
-                image: "grandpa1.jpg",
-                audio: "story2.mp3"
-            },
-            {
-                title: "Grandma Layla — Traditional Herbal Remedies",
-                meta: "Recorded in 2026 • Duration: 0:52",
-                quote: "“A cup of warm mint and chamomile before sleep brings peace to both heart and mind.”",
-                image: "grandma1.jpg",
-                audio: "story1.mp3"
-            },
-            {
-                title: "Grandpa Omar — Tales from the Old Market",
-                meta: "Recorded in 2026 • Duration: 1:20",
-                quote: "“People knew each other by heart, and trust was worth more than gold.”",
-                image: "grandpa1.jpg",
-                audio: "story2.mp3"
+                image: "",
+                audio: ""
             }
         ];
+
+        const branchPositions = [
+            { top: "20%", left: "16%" },
+            { top: "20%", left: "62%" },
+            { top: "42%", left: "20%" },
+            { top: "42%", left: "58%" },
+            { top: "12%", left: "39%" },
+            { top: "32%", left: "39%" },
+            { top: "55%", left: "14%" },
+            { top: "55%", left: "64%" }
+        ];
+
+        const branchesWrapper = document.getElementById("branchesWrapper");
+
+        // Voice recording state
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let recordedAudioURL = "";
+
+        const recordBtn = document.getElementById("recordBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const recordStatus = document.getElementById("recordStatus");
+        const recordedPreview = document.getElementById("recordedPreview");
+        const audioInput = document.getElementById("audioInput");
+
+        recordBtn.addEventListener("click", async function () {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                recordStatus.textContent = "Microphone recording is not supported in this browser.";
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = function (event) {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = function () {
+                    const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+                    recordedAudioURL = URL.createObjectURL(audioBlob);
+                    recordedPreview.src = recordedAudioURL;
+                    recordedPreview.style.display = "block";
+                    recordStatus.textContent = "Recording saved! Ready to add branch.";
+
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                recordBtn.disabled = true;
+                stopBtn.disabled = false;
+                recordStatus.textContent = "Recording... speak clearly";
+            } catch (err) {
+                recordStatus.textContent = "Microphone access denied or unavailable.";
+            }
+        });
+
+        stopBtn.addEventListener("click", function () {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+                recordBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        });
+
+        audioInput.addEventListener("change", function () {
+            if (this.files && this.files[0]) {
+                recordedAudioURL = "";
+                recordedPreview.style.display = "none";
+                recordedPreview.src = "";
+                recordStatus.textContent = "Audio file selected from device.";
+            }
+        });
+
+        // Notification & soft chime
+        const memoryNotification = document.getElementById("memoryNotification");
+        const notificationTitle = document.getElementById("notificationTitle");
+        const notificationMessage = document.getElementById("notificationMessage");
+        const goToMemoryBtn = document.getElementById("goToMemoryBtn");
+        const closeNotificationBtn = document.getElementById("closeNotificationBtn");
+
+        let notificationTimer = null;
+        let latestAddedIndex = null;
+
+        function playSoftChime() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+
+                const ctx = new AudioCtx();
+                const now = ctx.currentTime;
+
+                const notes = [523.25, 659.25, 783.99];
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+                    gain.gain.setValueAtTime(0.001, now + idx * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.08, now + idx * 0.12 + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(now + idx * 0.12);
+                    osc.stop(now + idx * 0.12 + 0.38);
+                });
+            } catch (e) {
+                // Ignore if audio context is blocked
+            }
+        }
+
+        function showMemoryNotification(personName, storyTitle, memoryIndex) {
+            latestAddedIndex = memoryIndex;
+
+            notificationTitle.textContent = `New Memory from/for ${personName} • أدرجوا لك رسالة جديدة!`;
+            notificationMessage.textContent = `"${storyTitle}" was added to the tree — go check it out! / أضافوا لك ذكرى ورسالة جديدة، روح شوفها الآن!`;
+
+            memoryNotification.style.display = "flex";
+            playSoftChime();
+
+            clearTimeout(notificationTimer);
+            notificationTimer = setTimeout(() => {
+                memoryNotification.style.display = "none";
+            }, 8000);
+        }
+
+        goToMemoryBtn.addEventListener("click", function () {
+            if (latestAddedIndex !== null) {
+                playMemory(latestAddedIndex);
+                document.getElementById("storyPlayerCard").scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            memoryNotification.style.display = "none";
+        });
+
+        closeNotificationBtn.addEventListener("click", function () {
+            memoryNotification.style.display = "none";
+            clearTimeout(notificationTimer);
+        });
+
+        function renderBranches() {
+            branchesWrapper.innerHTML = "";
+            memories.forEach((mem, index) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "memory-branch";
+
+                const pos = branchPositions[index % branchPositions.length];
+                btn.style.top = pos.top;
+                btn.style.left = pos.left;
+                btn.style.animationDelay = `${(index * 0.4) % 2}s`;
+
+                btn.innerHTML = `
+                    <span class="blossom-icon">${index % 2 === 0 ? "🌸" : "🌺"}</span>
+                    <span class="branch-title">${mem.name}</span>
+                    <small>${mem.shortTitle}</small>
+                `;
+
+                btn.onclick = () => playMemory(index);
+                branchesWrapper.appendChild(btn);
+            });
+        }
 
         function playMemory(index) {
             const selected = memories[index];
             document.getElementById("memoryTitle").textContent = selected.title;
             document.getElementById("memoryMeta").textContent = selected.meta;
             document.getElementById("memoryQuote").textContent = selected.quote;
-            document.getElementById("grandparentImg").src = selected.image;
+
+            const imgEl = document.getElementById("grandparentImg");
+            const placeholderEl = document.getElementById("photoPlaceholder");
+            if (selected.image) {
+                imgEl.src = selected.image;
+                imgEl.style.display = "block";
+                placeholderEl.style.display = "none";
+            } else {
+                imgEl.style.display = "none";
+                placeholderEl.style.display = "flex";
+            }
 
             const audioPlayer = document.getElementById("memoryAudio");
-            const audioSource = document.getElementById("audioSource");
-            audioSource.src = selected.audio;
-            audioPlayer.load();
-            audioPlayer.play();
+            const noAudioMsg = document.getElementById("noAudioMsg");
+            if (selected.audio) {
+                audioPlayer.src = selected.audio;
+                audioPlayer.style.display = "block";
+                noAudioMsg.style.display = "none";
+                audioPlayer.load();
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+                audioPlayer.style.display = "none";
+                noAudioMsg.style.display = "block";
+            }
 
             const allBranches = document.querySelectorAll(".memory-branch");
             allBranches.forEach(btn => btn.classList.remove("active-branch"));
-            allBranches[index].classList.add("active-branch");
+            if (allBranches[index]) {
+                allBranches[index].classList.add("active-branch");
+            }
         }
+
+        document.getElementById("addMemoryForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const name = document.getElementById("personName").value.trim();
+            const shortTitle = document.getElementById("storyTitle").value.trim();
+            const quoteText = document.getElementById("storyQuote").value.trim();
+            const photoFile = document.getElementById("photoInput").files[0];
+            const audioFile = audioInput.files[0];
+
+            const imageURL = photoFile ? URL.createObjectURL(photoFile) : "";
+            let finalAudioURL = "";
+            let audioSourceLabel = "Text memory";
+
+            if (recordedAudioURL) {
+                finalAudioURL = recordedAudioURL;
+                audioSourceLabel = "Recorded voice";
+            } else if (audioFile) {
+                finalAudioURL = URL.createObjectURL(audioFile);
+                audioSourceLabel = "Uploaded audio";
+            }
+
+            const newMemory = {
+                name: name,
+                shortTitle: shortTitle,
+                title: `${name} — ${shortTitle}`,
+                meta: `Added just now • ${audioSourceLabel}`,
+                quote: `“${quoteText}”`,
+                image: imageURL,
+                audio: finalAudioURL
+            };
+
+            memories.push(newMemory);
+            renderBranches();
+
+            const newIndex = memories.length - 1;
+            playMemory(newIndex);
+            showMemoryNotification(name, shortTitle, newIndex);
+
+            this.reset();
+            recordedAudioURL = "";
+            recordedPreview.style.display = "none";
+            recordedPreview.src = "";
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+            recordStatus.textContent = "Ready to record";
+        });
+
+        renderBranches();
     </script>
 
 </body>
