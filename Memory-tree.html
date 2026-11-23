@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medimemories - Memory Tree</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400;1,500;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Memory-tree.css">
 </head>
 <body>
@@ -16,21 +19,29 @@
 
     <main>
         <!-- NOTIFICATION BANNER -->
-        <div id="memoryNotification" class="memory-notification" role="alert" style="display: none;">
+        <div id="memoryNotification" class="memory-notification" role="status" aria-live="polite" style="display: none;">
+            <div id="notificationPetalsLayer" class="notification-petals-layer" aria-hidden="true"></div>
+
             <div class="notification-content">
                 <span class="notification-icon">🔔</span>
                 <div>
-                    <strong id="notificationTitle">New Memory Added! / تم إدراج رسالة جديدة لك!</strong>
-                    <p id="notificationMessage">A new message was added to your tree — go check it out! / أدرجوا لك رسالة وذكرى جديدة على الشجرة، روح شوفها الآن!</p>
+                    <p id="notificationMessage" class="notification-poetic-text"></p>
                 </div>
             </div>
             <div class="notification-actions">
-                <button type="button" id="goToMemoryBtn" class="notification-view-btn">Go Check It 👀 / شوفها</button>
+                <button type="button" id="goToMemoryBtn" class="notification-view-btn">View Memory 🌸</button>
                 <button type="button" id="closeNotificationBtn" class="notification-close-btn" aria-label="Close">✕</button>
             </div>
         </div>
 
         <section class="tree-section">
+            <div class="tree-top-meta">
+                <div id="branchCounterBadge" class="branch-counter-badge" aria-live="polite">
+                    <span class="branch-icon">🌿</span>
+                    <span id="branchCountText">2 Branches</span>
+                </div>
+            </div>
+
             <h2>Interactive Family Memory Tree</h2>
             <p>Each blossom holds a precious voice recording and timeless advice.</p>
 
@@ -143,6 +154,24 @@
     </footer>
 
     <script>
+        const POETIC_MESSAGES = [
+            "A new pulse of nostalgia has visited your tree with a message overflowing with warmth — kindly take a look.",
+            "Your tree is blooming with a warm new memory, gently added just for you — please view it now.",
+            "Every branch holds a tale, and today a new story and message have arrived on your tree — we invite you to explore it."
+        ];
+
+        let lastMessageIndex = -1;
+
+        function getNextPoeticMessage() {
+            let nextIndex;
+            do {
+                nextIndex = Math.floor(Math.random() * POETIC_MESSAGES.length);
+            } while (nextIndex === lastMessageIndex && POETIC_MESSAGES.length > 1);
+
+            lastMessageIndex = nextIndex;
+            return POETIC_MESSAGES[nextIndex];
+        }
+
         const memories = [
             {
                 name: "Grandma Nora",
@@ -176,6 +205,19 @@
         ];
 
         const branchesWrapper = document.getElementById("branchesWrapper");
+        const branchCounterBadge = document.getElementById("branchCounterBadge");
+        const branchCountText = document.getElementById("branchCountText");
+
+        function updateBranchCounter(animate = false) {
+            const count = memories.length;
+            branchCountText.textContent = count === 1 ? "1 Branch" : `${count} Branches`;
+
+            if (animate) {
+                branchCounterBadge.classList.remove("pulse");
+                void branchCounterBadge.offsetWidth;
+                branchCounterBadge.classList.add("pulse");
+            }
+        }
 
         // Voice recording state
         let mediaRecorder = null;
@@ -241,10 +283,10 @@
             }
         });
 
-        // Notification & soft chime
+        // Notification, petals (on notification only) & soft chime
         const memoryNotification = document.getElementById("memoryNotification");
-        const notificationTitle = document.getElementById("notificationTitle");
         const notificationMessage = document.getElementById("notificationMessage");
+        const notificationPetalsLayer = document.getElementById("notificationPetalsLayer");
         const goToMemoryBtn = document.getElementById("goToMemoryBtn");
         const closeNotificationBtn = document.getElementById("closeNotificationBtn");
 
@@ -282,19 +324,40 @@
             }
         }
 
-        function showMemoryNotification(personName, storyTitle, memoryIndex) {
-            latestAddedIndex = memoryIndex;
+        function spawnNotificationParticles() {
+            notificationPetalsLayer.innerHTML = "";
+            const symbols = ["🌸", "💗", "🌷", "🤍", "🌸", "💕"];
+            const count = 12;
 
-            notificationTitle.textContent = `New Memory from/for ${personName} • أدرجوا لك رسالة جديدة!`;
-            notificationMessage.textContent = `"${storyTitle}" was added to the tree — go check it out! / أضافوا لك ذكرى ورسالة جديدة، روح شوفها الآن!`;
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement("span");
+                particle.className = "notification-particle";
+                particle.textContent = symbols[i % symbols.length];
+
+                const left = 6 + Math.random() * 88;
+                const driftX = (Math.random() - 0.5) * 42;
+                const delay = Math.random() * 0.45;
+
+                particle.style.left = `${left}%`;
+                particle.style.setProperty("--drift-x", `${driftX}px`);
+                particle.style.animationDelay = `${delay}s`;
+
+                notificationPetalsLayer.appendChild(particle);
+            }
+        }
+
+        function showMemoryNotification(memoryIndex) {
+            latestAddedIndex = memoryIndex;
+            notificationMessage.textContent = getNextPoeticMessage();
 
             memoryNotification.style.display = "flex";
+            spawnNotificationParticles();
             playSoftChime();
 
             clearTimeout(notificationTimer);
             notificationTimer = setTimeout(() => {
                 memoryNotification.style.display = "none";
-            }, 8000);
+            }, 8500);
         }
 
         goToMemoryBtn.addEventListener("click", function () {
@@ -403,11 +466,12 @@
             };
 
             memories.push(newMemory);
+            updateBranchCounter(true);
             renderBranches();
 
             const newIndex = memories.length - 1;
             playMemory(newIndex);
-            showMemoryNotification(name, shortTitle, newIndex);
+            showMemoryNotification(newIndex);
 
             this.reset();
             recordedAudioURL = "";
@@ -418,6 +482,7 @@
             recordStatus.textContent = "Ready to record";
         });
 
+        updateBranchCounter(false);
         renderBranches();
     </script>
 
