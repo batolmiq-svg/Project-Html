@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medimemories - Memory Tree</title>
+    <link rel="stylesheet" href="memory-tree.css">
+</head>
+<body>
+
+    <header>
+        <h1>🌳 Grandma’s Memory Tree</h1>
+        <h2>Preserving Voices, Stories &amp; Wisdom</h2>
+        <p>Click on any glowing pink branch or blossom to listen to our grandparents' stories.</p>
+    </header>
+
+    <main>
+        <section class="tree-section">
+            <h2>Interactive Family Memory Tree</h2>
+            <p>Each branch holds a precious voice recording and timeless advice.</p>
+
+            <div class="tree-container">
+                <svg class="pink-tree" viewBox="0 0 800 620" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="trunkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#6d4c6e" />
+                            <stop offset="50%" stop-color="#8b628c" />
+                            <stop offset="100%" stop-color="#59465c" />
+                        </linearGradient>
+
+                        <radialGradient id="pinkCanopy" cx="50%" cy="45%" r="55%">
+                            <stop offset="0%" stop-color="#ffd1e8" />
+                            <stop offset="55%" stop-color="#f3a6d0" />
+                            <stop offset="100%" stop-color="#b87db8" />
+                        </radialGradient>
+
+                        <radialGradient id="softLavender" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#ffe4f2" />
+                            <stop offset="70%" stop-color="#e599c8" />
+                            <stop offset="100%" stop-color="#956b91" />
+                        </radialGradient>
+                    </defs>
+
+                    <ellipse cx="400" cy="585" rx="230" ry="22" fill="rgba(118, 84, 119, 0.22)" />
+
+                    <path class="tree-trunk" d="M365,580 Q375,450 350,350 Q310,290 230,250 L245,235 Q325,275 370,330 Q395,250 390,180 L412,180 Q415,255 430,325 Q485,270 565,235 L578,252 Q495,290 448,350 Q425,450 438,580 Z" fill="url(#trunkGrad)" />
+
+                    <g class="tree-foliage">
+                        <circle cx="400" cy="195" r="145" fill="url(#pinkCanopy)" opacity="0.92" />
+                        <circle cx="255" cy="255" r="115" fill="url(#softLavender)" opacity="0.90" />
+                        <circle cx="545" cy="255" r="115" fill="url(#softLavender)" opacity="0.90" />
+                        <circle cx="310" cy="155" r="105" fill="url(#pinkCanopy)" opacity="0.88" />
+                        <circle cx="490" cy="155" r="105" fill="url(#pinkCanopy)" opacity="0.88" />
+                        <circle cx="400" cy="115" r="95" fill="#ffd9ec" opacity="0.85" />
+                    </g>
+                </svg>
+
+                <button type="button" class="memory-branch branch-1" onclick="playMemory(0)">
+                    <span class="blossom-icon">🌸</span>
+                    <span class="branch-title">Grandma Nora</span>
+                    <small>Childhood Eid Story</small>
+                </button>
+
+                <button type="button" class="memory-branch branch-2" onclick="playMemory(1)">
+                    <span class="blossom-icon">🌺</span>
+                    <span class="branch-title">Grandpa Saleh</span>
+                    <small>Wisdom on Patience</small>
+                </button>
+
+                <button type="button" class="memory-branch branch-3" onclick="playMemory(2)">
+                    <span class="blossom-icon">🌸</span>
+                    <span class="branch-title">Grandma Layla</span>
+                    <small>Herbal Tea &amp; Care</small>
+                </button>
+
+                <button type="button" class="memory-branch branch-4" onclick="playMemory(3)">
+                    <span class="blossom-icon">🌺</span>
+                    <span class="branch-title">Grandpa Omar</span>
+                    <small>Old Neighborhood Tales</small>
+                </button>
+            </div>
+        </section>
+
+        <section class="story-player-card" id="storyPlayerCard">
+            <div class="story-header">
+                <img id="grandparentImg" src="grandma1.jpg" alt="Grandparent Portrait" class="grandparent-photo">
+                <div>
+                    <h3 id="memoryTitle">Select a Branch on the Tree</h3>
+                    <p id="memoryMeta" class="memory-meta">Click any pink blossom above to hear a voice memory.</p>
+                </div>
+            </div>
+
+            <blockquote id="memoryQuote" class="memory-quote">
+                “Every wrinkle tells a story, and every voice is a treasure worth keeping.”
+            </blockquote>
+
+            <audio id="memoryAudio" controls>
+                <source id="audioSource" src="story1.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </section>
+
+        <section class="tips-section">
+            <h3>How to Use the Memory Tree</h3>
+            <ul class="memory-guide-list">
+                <li>Click on any pink flower branch on the tree to load a grandparent's story.</li>
+                <li>Listen to the recorded audio message using the built-in player.</li>
+                <li>Read the written wisdom quote saved alongside the recording.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Medimemories - Grandma’s Safety &amp; Nostalgia Hub | All Rights Reserved</p>
+    </footer>
+
+    <script>
+        const memories = [
+            {
+                title: "Grandma Nora — Childhood Eid Memories",
+                meta: "Recorded in 2025 • Duration: 0:45",
+                quote: "“In the old days, the whole neighborhood gathered before sunrise, sharing warm dates and laughter.”",
+                image: "grandma1.jpg",
+                audio: "story1.mp3"
+            },
+            {
+                title: "Grandpa Saleh — Wisdom on Patience & Kindness",
+                meta: "Recorded in 2025 • Duration: 1:10",
+                quote: "“Take your time in life, my children; a gentle word heals faster than any medicine.”",
+                image: "grandpa1.jpg",
+                audio: "story2.mp3"
+            },
+            {
+                title: "Grandma Layla — Traditional Herbal Remedies",
+                meta: "Recorded in 2026 • Duration: 0:52",
+                quote: "“A cup of warm mint and chamomile before sleep brings peace to both heart and mind.”",
+                image: "grandma1.jpg",
+                audio: "story1.mp3"
+            },
+            {
+                title: "Grandpa Omar — Tales from the Old Market",
+                meta: "Recorded in 2026 • Duration: 1:20",
+                quote: "“People knew each other by heart, and trust was worth more than gold.”",
+                image: "grandpa1.jpg",
+                audio: "story2.mp3"
+            }
+        ];
+
+        function playMemory(index) {
+            const selected = memories[index];
+            document.getElementById("memoryTitle").textContent = selected.title;
+            document.getElementById("memoryMeta").textContent = selected.meta;
+            document.getElementById("memoryQuote").textContent = selected.quote;
+            document.getElementById("grandparentImg").src = selected.image;
+
+            const audioPlayer = document.getElementById("memoryAudio");
+            const audioSource = document.getElementById("audioSource");
+            audioSource.src = selected.audio;
+            audioPlayer.load();
+            audioPlayer.play();
+
+            const allBranches = document.querySelectorAll(".memory-branch");
+            allBranches.forEach(btn => btn.classList.remove("active-branch"));
+            allBranches[index].classList.add("active-branch");
+        }
+    </script>
+
+</body>
+</html>
