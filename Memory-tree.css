@@ -75,6 +75,86 @@ main > .tree-section > p {
 }
 
 /* =========================
+   NEW MEMORY NOTIFICATION
+========================= */
+.memory-notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    max-width: 760px;
+    margin: 0 auto 22px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #fff0f7, #f5ebfa);
+    border: 2px solid #e599c8;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(118, 84, 119, 0.18);
+    animation: slideDownNotif 0.35s ease;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-icon {
+    font-size: 26px;
+}
+
+.notification-content strong {
+    display: block;
+    color: #765477;
+    font-size: 16px;
+    margin-bottom: 3px;
+}
+
+.notification-content p {
+    margin: 0;
+    color: #59465c;
+    font-size: 14px;
+}
+
+.notification-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.notification-view-btn {
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #f3a6d0, #956b91);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.notification-close-btn {
+    background: transparent;
+    border: none;
+    color: #765477;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 4px 8px;
+}
+
+@keyframes slideDownNotif {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================
    LARGE PINK & LAVENDER ANIMATED TREE
 ========================= */
 .tree-container {
@@ -165,29 +245,6 @@ main > .tree-section > p {
     opacity: 0.9;
 }
 
-.branch-1 {
-    top: 22%;
-    left: 16%;
-}
-
-.branch-2 {
-    top: 20%;
-    right: 16%;
-    animation-delay: 0.8s;
-}
-
-.branch-3 {
-    top: 44%;
-    left: 22%;
-    animation-delay: 1.4s;
-}
-
-.branch-4 {
-    top: 44%;
-    right: 22%;
-    animation-delay: 2s;
-}
-
 @keyframes floatBranch {
     0% {
         transform: translateY(0px);
@@ -225,6 +282,18 @@ main > .tree-section > p {
     border: 3px solid #e599c8;
 }
 
+.photo-placeholder {
+    width: 85px;
+    height: 85px;
+    border-radius: 50%;
+    background: #ffe4f2;
+    border: 3px solid #e599c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+}
+
 .story-header h3 {
     color: #765477;
     font-size: 22px;
@@ -254,26 +323,134 @@ audio {
 }
 
 /* =========================
-   GUIDE LIST & FOOTER
+   ADD NEW MEMORY FORM
 ========================= */
-.tips-section {
+.add-memory-section {
     max-width: 760px;
-    margin: 0 auto;
-    padding: 20px 25px;
+    margin: 0 auto 25px;
+    padding: 25px;
     background: #faf5fb;
-    border: 1px solid #eaddec;
-    border-radius: 16px;
+    border: 2px solid #eaddec;
+    border-radius: 20px;
 }
 
-.tips-section h3 {
+.add-memory-section h3 {
     color: #765477;
-    margin-top: 0;
+    margin: 0 0 6px;
 }
 
-.memory-guide-list {
+.add-memory-section > p {
+    color: #766b78;
+    margin: 0 0 18px;
+    font-size: 15px;
+}
+
+.add-memory-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row label {
+    font-weight: 700;
     color: #59465c;
-    line-height: 1.8;
-    padding-left: 20px;
+    font-size: 14px;
+}
+
+.form-row input[type="text"],
+.form-row textarea {
+    padding: 10px 14px;
+    border: 1.5px solid #d8bfd8;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    background: #ffffff;
+    color: #59465c;
+}
+
+.form-row input[type="file"] {
+    padding: 8px;
+    background: #ffffff;
+    border: 1.5px dashed #e599c8;
+    border-radius: 12px;
+    color: #59465c;
+}
+
+/* =========================
+   VOICE RECORDING CONTROLS
+========================= */
+.voice-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.record-btn,
+.stop-btn {
+    padding: 9px 15px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.record-btn {
+    background: #e599c8;
+    color: #ffffff;
+}
+
+.record-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: #d47eb5;
+}
+
+.stop-btn {
+    background: #765477;
+    color: #ffffff;
+}
+
+.stop-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.record-btn:disabled,
+.stop-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.record-status {
+    font-size: 13px;
+    color: #765477;
+    font-weight: 600;
+}
+
+.add-branch-btn {
+    margin-top: 6px;
+    padding: 13px 20px;
+    background: linear-gradient(135deg, #f3a6d0, #956b91);
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.add-branch-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(118, 84, 119, 0.3);
 }
 
 footer {
@@ -305,5 +482,10 @@ footer {
     .story-header {
         flex-direction: column;
         text-align: center;
+    }
+
+    .memory-notification {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
