@@ -1,3 +1,4 @@
+
 /* =========================
    GENERAL SETTINGS
 ========================= */
@@ -557,4 +558,511 @@ main > p {
     direction: ltr;
     text-align: left;
     font-family: Arial, sans-serif;
+}
+
+/* =========================
+   ALARM BUTTON DESIGN
+========================= */
+
+/* Hide test button from main page */
+#testAlarm {
+    display: none;
+}
+
+/* Hide stop button until alarm rings */
+#stopAlarm {
+    display: none;
+    background: #c47c91;
+    border-radius: 11px;
+    padding: 12px 22px;
+    font-weight: 700;
+}
+
+/* Show stop button only while alarm is playing */
+body.alarm-playing #stopAlarm {
+    display: inline-block;
+}
+
+/* Alarm button hover */
+#stopAlarm:hover {
+    background: #a65c75;
+}
+#stopAlarm {
+    position: relative;
+    z-index: 9999;
+    cursor: pointer;
+    pointer-events: auto;
+}
+/* =========================
+   1. GENERAL SETTINGS
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    direction: ltr;
+    background-image: url("family-background.png.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #59465c;
+}
+
+/* =========================
+   2. HEADER
+========================= */
+
+header {
+    text-align: center;
+    padding: 35px 15px 20px;
+}
+
+header h1 {
+    color: #765477;
+    font-size: 42px;
+    font-weight: 800;
+    margin: 10px 0 22px;
+}
+
+header h2 {
+    color: #956b91;
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 15px;
+}
+
+header p {
+    color: #766b78;
+    font-size: 20px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* =========================
+   3. MAIN CONTENT
+========================= */
+
+main {
+    max-width: 1100px;
+    margin: 20px auto 50px;
+    padding: 25px;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 22px;
+    box-shadow: 0 8px 25px rgba(80, 50, 80, 0.10);
+    backdrop-filter: blur(5px);
+}
+
+main > h2 {
+    color: #765477;
+    font-size: 30px;
+    margin: 0 0 10px;
+}
+
+main > p {
+    color: #766b78;
+    font-size: 19px;
+    margin: 0 0 22px;
+}
+
+/* =========================
+   4. BUTTONS
+========================= */
+
+button {
+    background: #765477;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    padding: 12px 22px;
+    margin: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    background: #5d405f;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================
+   5. MEDICATION FORM
+========================= */
+
+#medicationForm {
+    max-width: 650px;
+    margin: 25px auto;
+    padding: 25px;
+    display: grid;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid #eaddec;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(80, 50, 80, 0.10);
+}
+
+#medicationForm[hidden] {
+    display: none;
+}
+
+#medicationForm h3 {
+    color: #765477;
+    text-align: center;
+    font-size: 24px;
+    margin: 0 0 12px;
+}
+
+label {
+    color: #59465c;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 5px 0;
+    border: 1px solid #ddcddd;
+    border-radius: 9px;
+    background: #fff;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #956b91;
+    box-shadow: 0 0 0 3px rgba(118, 84, 119, 0.12);
+}
+
+#medicationForm textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+#imagePreview {
+    width: 130px;
+    height: 130px;
+    object-fit: contain;
+    padding: 8px;
+    margin: 8px auto;
+    border: 1px dashed #b9a3bb;
+    border-radius: 12px;
+    background: #faf7fa;
+}
+
+/* =========================
+   6. MEDICATION LIST
+========================= */
+
+#medicationList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+    margin-top: 35px;
+}
+
+#medicationList > h2 {
+    grid-column: 1 / -1;
+    color: #765477;
+    font-size: 25px;
+    margin: 0 0 5px;
+}
+
+/* =========================
+   7. MANAGEMENT BUTTON
+========================= */
+
+#medicationList > .manage-button {
+    grid-column: 1 / -1;
+    justify-self: start;
+    min-width: 250px;
+    margin: 5px 0 10px;
+}
+
+/* =========================
+   8. SELECT ALL AND DELETE
+========================= */
+
+.selection-controls {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    padding: 15px 18px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid #eaddec;
+    border-radius: 14px;
+}
+
+.selection-controls label,
+.medication-card label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #765477;
+    cursor: pointer;
+}
+
+.selection-controls input[type="checkbox"],
+.medication-card input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #765477;
+    margin: 0;
+}
+
+.selection-controls button {
+    margin: 0;
+}
+
+/* =========================
+   9. MEDICATION CARDS
+========================= */
+
+.medication-card {
+    width: 100%;
+    min-width: 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #eaddec;
+    border-radius: 15px;
+    box-shadow: 0 5px 16px rgba(80, 50, 80, 0.09);
+    transition: 0.2s ease;
+}
+
+.medication-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(80, 50, 80, 0.13);
+}
+
+.medication-card h3 {
+    color: #765477;
+    font-size: 21px;
+    margin: 14px 0;
+}
+
+/* =========================
+   10. MEDICATION PICTURES
+========================= */
+
+.medication-picture {
+    width: 100%;
+    height: 220px;
+    display: block;
+    object-fit: cover;
+    margin: 12px auto 18px;
+    border-radius: 14px;
+    background: #f8eff8;
+}
+
+/* =========================
+   11. MEDICATION DETAILS
+========================= */
+
+.medication-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.medication-detail {
+    display: grid;
+    grid-template-columns: 25px 1fr;
+    gap: 5px 10px;
+    min-width: 0;
+    padding: 8px;
+    background: #faf5fb;
+    border: 1px solid #f0e3f0;
+    border-radius: 11px;
+}
+
+.medication-detail strong {
+    color: #765477;
+    font-size: 13px;
+}
+
+.medication-detail span:last-child {
+    grid-column: 2;
+    color: #594f5b;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+/* =========================
+   12. CARD ACTION BUTTONS
+========================= */
+
+.medication-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.medication-actions button {
+    flex: 1;
+    font-size: 14px;
+    padding: 10px;
+    margin: 0;
+}
+
+/* =========================
+   13. TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+}
+
+th,
+td {
+    padding: 13px;
+    border: 1px solid #eaddec;
+    text-align: center;
+}
+
+th {
+    background: #765477;
+    color: white;
+}
+
+/* =========================
+   14. REMINDER TIME FIELDS
+========================= */
+
+#reminderTimesContainer {
+    display: grid;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+#reminderTimesContainer label {
+    color: #59465c;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+#reminderTimesContainer input,
+#reminderTime,
+#reminderTimeDisplay {
+    direction: ltr !important;
+    text-align: left !important;
+    font-family: Arial, sans-serif !important;
+    unicode-bidi: isolate;
+}
+
+#reminderTimeDisplay {
+    font-size: 17px;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   15. ALARM BUTTON DESIGN
+========================= */
+
+#stopAlarm {
+    display: none;
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+    cursor: pointer;
+    background: #c47c91;
+    border-radius: 11px;
+    padding: 12px 22px;
+    font-weight: 700;
+}
+
+body.alarm-playing #stopAlarm {
+    display: inline-block;
+}
+
+#stopAlarm:hover {
+    background: #a65c75;
+}
+
+/* =========================
+   16. RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 800px) {
+    #medicationList {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    header {
+        padding: 25px 12px 15px;
+    }
+
+    header h1 {
+        font-size: 30px;
+    }
+
+    header h2 {
+        font-size: 24px;
+    }
+
+    header p {
+        font-size: 17px;
+    }
+
+    main {
+        margin: 12px;
+        padding: 18px;
+    }
+
+    main > h2 {
+        font-size: 23px;
+    }
+
+    #medicationForm {
+        padding: 17px;
+    }
+
+    .selection-controls {
+        align-items: flex-start;
+    }
+
+    button {
+        font-size: 15px;
+        padding: 11px 16px;
+    }
+}
+
+@media (max-width: 550px) {
+    #medicationList {
+        grid-template-columns: 1fr;
+    }
+
+    #medicationList > .manage-button {
+        width: 100%;
+    }
 }
