@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medimemories - Memory Tree</title>
+    <title>Medimemories - Grandma's Memory Tree</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,500;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="Memory-tree.css">
 </head>
 <body>
 
     <header>
-        <h1>🌳 Grandma’s Memory Tree</h1>
+        <h1>Grandma's Memory Tree</h1>
         <h2>Preserving Voices, Stories &amp; Wisdom</h2>
-        <p>Click on any glowing pink blossom to listen, or add a new family memory branch below.</p>
+        <p>Click on any glowing pink blossom to listen, or add a new family memory branch below</p>
     </header>
 
     <main>
-        <!-- NOTIFICATION BANNER -->
+        <!-- POETIC NOTIFICATION BANNER -->
         <div id="memoryNotification" class="memory-notification" role="status" aria-live="polite" style="display: none;">
             <div id="notificationPetalsLayer" class="notification-petals-layer" aria-hidden="true"></div>
 
             <div class="notification-content">
-                <span class="notification-icon">🔔</span>
+                <span class="notification-icon">🌸</span>
                 <div>
                     <p id="notificationMessage" class="notification-poetic-text"></p>
                 </div>
@@ -34,114 +34,98 @@
             </div>
         </div>
 
+        <!-- INTERACTIVE FAMILY MEMORY TREE SECTION -->
         <section class="tree-section">
-            <div class="tree-top-meta">
+            <div class="section-header-row">
+                <h2>Interactive Family Memory Tree</h2>
                 <div id="branchCounterBadge" class="branch-counter-badge" aria-live="polite">
-                    <span class="branch-icon">🌿</span>
+                    <span>🌿</span>
                     <span id="branchCountText">2 Branches</span>
                 </div>
             </div>
 
-            <h2>Interactive Family Memory Tree</h2>
-            <p>Each blossom holds a precious voice recording and timeless advice.</p>
+            <div class="tree-stage" id="treeStage">
+                <div class="tree-sway-wrapper" id="treeSwayWrapper">
+                    <img id="cherryTreeImg"
+                         src="cherry-tree.png"
+                         alt="Pink Cherry Blossom Memory Tree"
+                         class="cherry-tree-image">
 
-            <div class="tree-container" id="treeContainer">
-                <svg class="pink-tree" viewBox="0 0 800 620" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="trunkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stop-color="#6d4c6e" />
-                            <stop offset="50%" stop-color="#8b628c" />
-                            <stop offset="100%" stop-color="#59465c" />
-                        </linearGradient>
-
-                        <radialGradient id="pinkCanopy" cx="50%" cy="45%" r="55%">
-                            <stop offset="0%" stop-color="#ffd1e8" />
-                            <stop offset="55%" stop-color="#f3a6d0" />
-                            <stop offset="100%" stop-color="#b87db8" />
-                        </radialGradient>
-
-                        <radialGradient id="softLavender" cx="50%" cy="50%" r="50%">
-                            <stop offset="0%" stop-color="#ffe4f2" />
-                            <stop offset="70%" stop-color="#e599c8" />
-                            <stop offset="100%" stop-color="#956b91" />
-                        </radialGradient>
-                    </defs>
-
-                    <ellipse cx="400" cy="585" rx="230" ry="22" fill="rgba(118, 84, 119, 0.22)" />
-
-                    <path class="tree-trunk" d="M365,580 Q375,450 350,350 Q310,290 230,250 L245,235 Q325,275 370,330 Q395,250 390,180 L412,180 Q415,255 430,325 Q485,270 565,235 L578,252 Q495,290 448,350 Q425,450 438,580 Z" fill="url(#trunkGrad)" />
-
-                    <g class="tree-foliage">
-                        <circle cx="400" cy="195" r="145" fill="url(#pinkCanopy)" opacity="0.92" />
-                        <circle cx="255" cy="255" r="115" fill="url(#softLavender)" opacity="0.90" />
-                        <circle cx="545" cy="255" r="115" fill="url(#softLavender)" opacity="0.90" />
-                        <circle cx="310" cy="155" r="105" fill="url(#pinkCanopy)" opacity="0.88" />
-                        <circle cx="490" cy="155" r="105" fill="url(#pinkCanopy)" opacity="0.88" />
-                        <circle cx="400" cy="115" r="95" fill="#ffd9ec" opacity="0.85" />
-                    </g>
-                </svg>
-
-                <!-- Dynamic branches will be rendered here -->
-                <div id="branchesWrapper"></div>
-            </div>
-        </section>
-
-        <!-- STORY & AUDIO PLAYER CARD -->
-        <section class="story-player-card" id="storyPlayerCard">
-            <div class="story-header">
-                <img id="grandparentImg" src="" alt="Grandparent Portrait" class="grandparent-photo" style="display: none;">
-                <div id="photoPlaceholder" class="photo-placeholder">🌸</div>
-                <div>
-                    <h3 id="memoryTitle">Select or Add a Branch on the Tree</h3>
-                    <p id="memoryMeta" class="memory-meta">Click any pink blossom above to view the story and play audio.</p>
+                    <!-- Dynamic Blossom Pin Cards Rendered on Tree Branches -->
+                    <div id="branchesWrapper" class="branches-wrapper"></div>
                 </div>
             </div>
-
-            <blockquote id="memoryQuote" class="memory-quote">
-                “Every wrinkle tells a story, and every voice is a treasure worth keeping.”
-            </blockquote>
-
-            <audio id="memoryAudio" controls style="display: none;">
-                Your browser does not support the audio element.
-            </audio>
-            <p id="noAudioMsg" class="memory-meta">No audio file attached for this branch yet.</p>
         </section>
 
-        <!-- ADD NEW BRANCH FORM FOR END USER -->
+        <!-- STORY & AUDIO PLAYER SECTION -->
+        <section class="story-player-section" id="storyPlayerCard">
+            <h3>Story &amp; Audio Player</h3>
+
+            <div class="story-player-row">
+                <div class="story-person-box">
+                    <img id="grandparentImg" src="" alt="Grandparent Portrait" class="grandparent-photo" style="display: none;">
+                    <div id="photoPlaceholder" class="photo-placeholder">🌸</div>
+
+                    <div class="story-text-content">
+                        <h4 id="memoryTitle">Grandma Nora — Childhood Eid Memories</h4>
+                        <blockquote id="memoryQuote" class="memory-quote">
+                            “In the old days, the whole neighborhood gathered before sunrise, sharing warm dates and laughter.”
+                        </blockquote>
+                        <p id="memoryMeta" class="memory-meta">Sample Memory • Record or upload below</p>
+                    </div>
+                </div>
+
+                <div class="story-audio-box">
+                    <audio id="memoryAudio" controls style="display: none;">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div id="audioPlaceholderPill" class="audio-placeholder-pill">
+                        <span>▶</span>
+                        <div class="audio-line"></div>
+                        <span>🔊</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADD NEW MEMORY BRANCH SECTION -->
         <section class="add-memory-section">
             <h3>🌸 Add a New Memory Branch</h3>
-            <p>Upload a photo and either record a voice note or choose an audio file from your device.</p>
 
             <form id="addMemoryForm" class="add-memory-form">
-                <div class="form-row">
-                    <label for="personName">Grandparent Name *</label>
-                    <input type="text" id="personName" placeholder="e.g., Grandma Fatima" required>
-                </div>
-
-                <div class="form-row">
-                    <label for="storyTitle">Story Title *</label>
-                    <input type="text" id="storyTitle" placeholder="e.g., Childhood Eid Story" required>
-                </div>
-
-                <div class="form-row">
-                    <label for="storyQuote">Wisdom Quote *</label>
-                    <textarea id="storyQuote" rows="2" placeholder="Write a memorable quote or advice..." required></textarea>
-                </div>
-
-                <div class="form-row">
-                    <label for="photoInput">Choose Photo (Optional)</label>
-                    <input type="file" id="photoInput" accept="image/*">
-                </div>
-
-                <div class="form-row">
-                    <label>Record Voice Directly or Upload Audio File (Optional)</label>
-                    <div class="voice-controls">
-                        <button type="button" id="recordBtn" class="record-btn">🎙️ Start Recording</button>
-                        <button type="button" id="stopBtn" class="stop-btn" disabled>⏹️ Stop</button>
-                        <span id="recordStatus" class="record-status">Ready to record</span>
+                <div class="form-grid-3">
+                    <div class="form-row">
+                        <label for="personName">Name</label>
+                        <input type="text" id="personName" placeholder="Grandma Nora" required>
                     </div>
-                    <audio id="recordedPreview" controls style="display: none; margin-top: 8px;"></audio>
-                    <input type="file" id="audioInput" accept="audio/*">
+
+                    <div class="form-row">
+                        <label for="storyTitle">Story Title</label>
+                        <input type="text" id="storyTitle" placeholder="Childhood Eid Story" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="storyQuote">Wisdom Quote</label>
+                        <input type="text" id="storyQuote" placeholder="In the old days..." required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-row">
+                        <label for="photoInput">Choose Photo (Optional)</label>
+                        <input type="file" id="photoInput" accept="image/*">
+                    </div>
+
+                    <div class="form-row">
+                        <label>Record Voice or Upload Audio (Optional)</label>
+                        <div class="voice-inline-group">
+                            <button type="button" id="recordBtn" class="record-btn">🎙️ Record</button>
+                            <button type="button" id="stopBtn" class="stop-btn" disabled>⏹️ Stop</button>
+                            <input type="file" id="audioInput" accept="audio/*">
+                        </div>
+                        <span id="recordStatus" class="record-status">Ready to record</span>
+                        <audio id="recordedPreview" controls style="display: none; margin-top: 6px;"></audio>
+                    </div>
                 </div>
 
                 <button type="submit" class="add-branch-btn">✨ Add Branch to Tree</button>
@@ -150,7 +134,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 Medimemories - Grandma’s Safety &amp; Nostalgia Hub | All Rights Reserved</p>
+        <p>&copy; 2026 Medimemories - Grandma's Safety Hub | All Rights Reserved</p>
     </footer>
 
     <script>
@@ -194,14 +178,14 @@
         ];
 
         const branchPositions = [
-            { top: "20%", left: "16%" },
-            { top: "20%", left: "62%" },
-            { top: "42%", left: "20%" },
-            { top: "42%", left: "58%" },
-            { top: "12%", left: "39%" },
-            { top: "32%", left: "39%" },
-            { top: "55%", left: "14%" },
-            { top: "55%", left: "64%" }
+            { top: "40%", left: "37%" },
+            { top: "40%", left: "58%" },
+            { top: "24%", left: "48%" },
+            { top: "53%", left: "28%" },
+            { top: "53%", left: "66%" },
+            { top: "27%", left: "33%" },
+            { top: "27%", left: "62%" },
+            { top: "47%", left: "48%" }
         ];
 
         const branchesWrapper = document.getElementById("branchesWrapper");
@@ -219,7 +203,6 @@
             }
         }
 
-        // Voice recording state
         let mediaRecorder = null;
         let audioChunks = [];
         let recordedAudioURL = "";
@@ -253,7 +236,6 @@
                     recordedPreview.src = recordedAudioURL;
                     recordedPreview.style.display = "block";
                     recordStatus.textContent = "Recording saved! Ready to add branch.";
-
                     stream.getTracks().forEach(track => track.stop());
                 };
 
@@ -283,7 +265,6 @@
             }
         });
 
-        // Notification, petals (on notification only) & soft chime
         const memoryNotification = document.getElementById("memoryNotification");
         const notificationMessage = document.getElementById("notificationMessage");
         const notificationPetalsLayer = document.getElementById("notificationPetalsLayer");
@@ -300,48 +281,36 @@
 
                 const ctx = new AudioCtx();
                 const now = ctx.currentTime;
-
                 const notes = [523.25, 659.25, 783.99];
                 notes.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-
                     osc.type = "sine";
                     osc.frequency.setValueAtTime(freq, now + idx * 0.12);
-
                     gain.gain.setValueAtTime(0.001, now + idx * 0.12);
                     gain.gain.exponentialRampToValueAtTime(0.08, now + idx * 0.12 + 0.03);
                     gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.35);
-
                     osc.connect(gain);
                     gain.connect(ctx.destination);
-
                     osc.start(now + idx * 0.12);
                     osc.stop(now + idx * 0.12 + 0.38);
                 });
-            } catch (e) {
-                // Ignore if audio context is blocked
-            }
+            } catch (e) {}
         }
 
         function spawnNotificationParticles() {
             notificationPetalsLayer.innerHTML = "";
             const symbols = ["🌸", "💗", "🌷", "🤍", "🌸", "💕"];
-            const count = 12;
-
-            for (let i = 0; i < count; i++) {
+            for (let i = 0; i < 12; i++) {
                 const particle = document.createElement("span");
                 particle.className = "notification-particle";
                 particle.textContent = symbols[i % symbols.length];
-
                 const left = 6 + Math.random() * 88;
                 const driftX = (Math.random() - 0.5) * 42;
                 const delay = Math.random() * 0.45;
-
                 particle.style.left = `${left}%`;
                 particle.style.setProperty("--drift-x", `${driftX}px`);
                 particle.style.animationDelay = `${delay}s`;
-
                 notificationPetalsLayer.appendChild(particle);
             }
         }
@@ -349,7 +318,6 @@
         function showMemoryNotification(memoryIndex) {
             latestAddedIndex = memoryIndex;
             notificationMessage.textContent = getNextPoeticMessage();
-
             memoryNotification.style.display = "flex";
             spawnNotificationParticles();
             playSoftChime();
@@ -379,16 +347,16 @@
                 const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "memory-branch";
+                if (index === 0) btn.classList.add("active-branch");
 
                 const pos = branchPositions[index % branchPositions.length];
                 btn.style.top = pos.top;
                 btn.style.left = pos.left;
-                btn.style.animationDelay = `${(index * 0.4) % 2}s`;
+                btn.style.animationDelay = `${(index * 0.45) % 2}s`;
 
                 btn.innerHTML = `
-                    <span class="blossom-icon">${index % 2 === 0 ? "🌸" : "🌺"}</span>
+                    <span class="blossom-icon">🌸</span>
                     <span class="branch-title">${mem.name}</span>
-                    <small>${mem.shortTitle}</small>
                 `;
 
                 btn.onclick = () => playMemory(index);
@@ -414,17 +382,17 @@
             }
 
             const audioPlayer = document.getElementById("memoryAudio");
-            const noAudioMsg = document.getElementById("noAudioMsg");
+            const audioPill = document.getElementById("audioPlaceholderPill");
             if (selected.audio) {
                 audioPlayer.src = selected.audio;
                 audioPlayer.style.display = "block";
-                noAudioMsg.style.display = "none";
+                audioPill.style.display = "none";
                 audioPlayer.load();
                 audioPlayer.play();
             } else {
                 audioPlayer.pause();
                 audioPlayer.style.display = "none";
-                noAudioMsg.style.display = "block";
+                audioPill.style.display = "flex";
             }
 
             const allBranches = document.querySelectorAll(".memory-branch");
